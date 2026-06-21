@@ -10,11 +10,10 @@
 (Movie)-[:HAS_GENRE]->(Genre)
 
 ```mermaid
-graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+graph LR
+    A[User] -- "FRIENDS_WITH" --> B[Person]
+    B -- "LIVES_IN" --> C[Batumi]
+    A -- "QAPLA" --> C[Batumi]
 ```
 
 ### 1. Які сутності стали вузлами, а які — ребрами? Чому?
