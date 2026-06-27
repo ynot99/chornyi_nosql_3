@@ -32,9 +32,28 @@ ORDER BY ratingsCount DESC, avgRating DESC;
 * Складні запити *
 *****************/
 // Запит 5. Рекомендація «користувачі зі схожими смаками також дивилися»: для заданого користувача знайти фільми, які він ще не дивився, але високо оцінили користувачі з подібними смаками:
-
-// !!! МІСЦЕ ДЛЯ ВАШОГО КОДУ !!!
+// Взяти користувача та фільми які він високо оцінив, та знайти інших користувачів
+// зі схожими смаками.
+MATCH (u:User {userId: 1})-[r:RATED]->(m:Movie)
+WHERE r.rating >= 4
+MATCH (m)<-[r2:RATED]-(similar:User)
+WHERE similar <> u AND r2.rating >= 4
+WITH u, similar, count(m) AS sharedMovies
+ORDER BY sharedMovies DESC
+LIMIT 50
+// Та знайти фільми для цього ж користувача, але які він ще не дивився,
+// але високо оцінили користувачі зі схожими смаками.
+MATCH (similar)-[r3:RATED]->(rec:Movie)
+WHERE r3.rating >= 4 AND NOT EXISTS { (u)-[:RATED]->(rec) }
+RETURN
+  rec.title AS recommendation,
+  count(DISTINCT similar) AS recommendedBy,
+  avg(r3.rating) AS avgRating
+ORDER BY recommendedBy DESC, avgRating DESC
+LIMIT 20;
 
 // Запит 6. Знайти найкоротший ланцюжок зв’язку між двома користувачами через спільні фільми:
-
-// !!! МІСЦЕ ДЛЯ ВАШОГО КОДУ !!!
+MATCH
+  path =
+    SHORTESTPATH ((u1:User {userId: 1})-[:RATED*..10]-(u2:User {userId: 2}))
+RETURN path, length(path) AS hops;
