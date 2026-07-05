@@ -2,6 +2,6 @@
 MATCH (n)
 WITH n, COUNT { (n)--() } AS degree
 WHERE degree > 1000
-RETURN labels(n), n.name, degree
+RETURN labels(n), coalesce(n.title, toString(n.userId)) AS identifier, degree
 ORDER BY degree DESC
 LIMIT 20;

@@ -3,8 +3,11 @@
 ****************/
 // Запит 1. Знайти всі фільми жанру «Thriller» із середнім рейтингом вище 4.0:
 MATCH (u:User)-[r:RATED]->(m:Movie)
-WHERE 'Thriller' IN m.genres AND r.rating > 4.0
-RETURN m;
+WHERE 'Thriller' IN m.genres
+WITH m, avg(r.rating) AS avgRating
+WHERE avgRating > 4.0
+RETURN m.title, avgRating
+ORDER BY avgRating DESC;
 
 // Запит 2. Знайти користувачів, які поставили оцінку 5 більш ніж 50 фільмам:
 MATCH (u:User)-[r:RATED {rating: 5}]->(m:Movie)
